@@ -17,7 +17,6 @@
       background: url('kampus1.jpg') no-repeat center center fixed;
       background-size: cover;
       position: relative;
-      min-height: 100vh;
       padding-top: 0px;
     }
 
@@ -110,7 +109,8 @@ body::before {
 
     function updateQRCode() {
       const token = generateToken();
-      const url = `https://ahmetdogankuday.github.io/yoklama/form.html?token=${token}`;
+      const timestamp = Date.now();  // Şu anki zaman (ms cinsinden)
+      const url = `https://ahmetdogankuday.github.io/yoklama/form.html?token=${token}&t=${timestamp}`;
 
       // Bağlantıyı güncelle
       const linkEl = document.getElementById("qrLink");
