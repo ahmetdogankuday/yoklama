@@ -130,46 +130,81 @@
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
   <script>
-
     let idCounter = localStorage.getItem("idCounter") || 1;
 
-document.getElementById("attendanceForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+    // ⏱ Formu tekrar kullanmaya karşı kilitle
+    const yoklamaAlindi = localStorage.getItem("yoklamaAlindi");
+    if (yoklamaAlindi === "true") {
+      window.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("ogrNo").disabled = true;
+        document.getElementById("adSoyad").disabled = true;
+        document.querySelector("button[type='submit']").disabled = true;
+        document.getElementById("successMsg").textContent = "Yoklamanız daha önce alınmıştır.";
+      });
+    }
 
-  // Token zaman kontrolü burada da yapılacak
-  const timestamp = parseInt(new URLSearchParams(window.location.search).get("t"));
-  const now = Date.now();
-  const fark = (now - timestamp) / 1000;
+    // 🕒 Token geçerlilik kontrolü (sayfa yüklendiğinde)
+    const params = new URLSearchParams(window.location.search);
+    const timestamp = parseInt(params.get("t"));
+    const now = Date.now();
+    const fark = (now - timestamp) / 1000;
 
-  if (isNaN(timestamp) || fark > 60) {
-    alert("Yoklama bağlantısının süresi dolmuştur. Lütfen yeni bir QR kodu kullanınız.");
-    return;
-  }
+    if (!timestamp || isNaN(timestamp)) {
+      document.body.innerHTML = `
+        <div style="text-align:center; padding-top:100px; font-family:Arial;">
+          <h2 style="color:red;">Geçersiz bağlantı.</h2>
+          <p>Bu sayfaya doğrudan erişim engellenmiştir. Lütfen QR kod ile erişiniz.</p>
+        </div>
+      `;
+    } else if (fark > 60) {
+      document.body.innerHTML = `
+        <div style="text-align:center; padding-top:100px; font-family:Arial;">
+          <h2 style="color:red;">Yoklama bağlantısının süresi dolmuştur.</h2>
+          <p>Lütfen güncel QR kodu kullanınız.</p>
+        </div>
+      `;
+    }
 
-  const ogrNo = document.getElementById("ogrNo").value.trim();
-  const adSoyad = document.getElementById("adSoyad").value.trim();
-  if (!ogrNo || !adSoyad) return;
+    // 📥 Form gönderme işlemi
+    document.getElementById("attendanceForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-  const tarihSaat = new Date().toLocaleString('tr-TR', {
-    day: '2-digit', month: 'long', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+      const nowSubmit = Date.now();
+      const farkSubmit = (nowSubmit - timestamp) / 1000;
+      if (isNaN(timestamp) || farkSubmit > 60) {
+        alert("Yoklama bağlantısının süresi dolmuştur. Lütfen yeni bir QR kodu kullanınız.");
+        return;
+      }
 
-  const kayit = {
-    id: idCounter++,
-    tarih: tarihSaat,
-    okulNo: ogrNo,
-    adSoyad: adSoyad
-  };
+      const ogrNo = document.getElementById("ogrNo").value.trim();
+      const adSoyad = document.getElementById("adSoyad").value.trim();
+      if (!ogrNo || !adSoyad) return;
 
-  localStorage.setItem("idCounter", idCounter);
-  let liste = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
-  liste.push(kayit);
-  localStorage.setItem("yoklamaVerileri", JSON.stringify(liste));
+      const tarihSaat = new Date().toLocaleString('tr-TR', {
+        day: '2-digit', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
 
-  document.getElementById("successMsg").textContent = "Yoklama başarıyla kaydedildi.";
-  document.getElementById("attendanceForm").reset();
-});
+      const kayit = {
+        id: idCounter++,
+        tarih: tarihSaat,
+        okulNo: ogrNo,
+        adSoyad: adSoyad
+      };
+
+      localStorage.setItem("idCounter", idCounter);
+      let liste = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
+      liste.push(kayit);
+      localStorage.setItem("yoklamaVerileri", JSON.stringify(liste));
+
+      localStorage.setItem("yoklamaAlindi", "true");
+      document.getElementById("successMsg").textContent = "Yoklama başarıyla kaydedildi.";
+      document.getElementById("attendanceForm").reset();
+
+      document.getElementById("ogrNo").disabled = true;
+      document.getElementById("adSoyad").disabled = true;
+      document.querySelector("button[type='submit']").disabled = true;
+    });
 
     function showLogin() {
       document.getElementById("loginPopup").style.display = "block";
@@ -205,36 +240,7 @@ document.getElementById("attendanceForm").addEventListener("submit", function(e)
       const adminBtn = document.querySelector('.admin-button');
       if (adminBtn) adminBtn.style.display = "block";
     });
-
   </script>
-
-<script>
-  // Zaman damgası kontrolü – 60 saniyeyi geçtiyse formu gösterme
-  const params = new URLSearchParams(window.location.search);
-  const timestamp = parseInt(params.get("t"));
-
-  if (!timestamp || isNaN(timestamp)) {
-    document.body.innerHTML = `
-      <div style="text-align:center; padding-top:100px; font-family:Arial;">
-        <h2 style="color:red;">Geçersiz bağlantı.</h2>
-        <p>Bu sayfaya doğrudan erişim engellenmiştir. Lütfen QR kod ile erişiniz.</p>
-      </div>
-    `;
-  } else {
-    const now = Date.now();
-    const fark = (now - timestamp) / 1000;
-
-    if (fark > 60) {
-      document.body.innerHTML = `
-        <div style="text-align:center; padding-top:100px; font-family:Arial;">
-          <h2 style="color:red;">Yoklama bağlantısının süresi dolmuştur.</h2>
-          <p>Lütfen güncel QR kodu kullanınız.</p>
-        </div>
-      `;
-    }
-  }
-</script>
-
 
 </body>
 </html>
