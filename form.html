@@ -55,29 +55,30 @@
       text-align: center;
     }
     .admin-button {
-      margin-top: 20px;
+      margin-top: 15px;
     }
-    .login-modal {
+    .login-popup {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
-    .login-box {
-      background: white;
-      padding: 20px;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -30%);
+      background-color: white;
+      padding: 25px;
+      border: 1px solid #ccc;
       border-radius: 10px;
-      text-align: center;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 999;
+    }
+    .login-popup input {
+      margin-bottom: 10px;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
+  <!-- LOGO -->
   <img class="logo" src="logo-black.png" alt="Bezmialem Logo">
   <h1>Ders Yoklama Formu</h1>
 
@@ -90,32 +91,28 @@
 
   <div class="success" id="successMsg"></div>
 
-  <!-- COPYRIGHT -->
-  <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
-
   <!-- İMZA LİSTESİ BUTONU -->
-  <div class="admin-button">
+  <div class="admin-button" style="display: block;">
     <button onclick="showLogin()">İmza Listesine Git</button>
   </div>
 
-  <!-- GİRİŞ MODAL -->
-  <div class="login-modal" id="loginModal">
-    <div class="login-box">
-      <h3>Giriş Yap</h3>
-      <input type="text" id="username" placeholder="Kullanıcı Adı"><br><br>
-      <input type="password" id="password" placeholder="Şifre"><br><br>
-      <button onclick="validateLogin()">Giriş</button>
-      <button onclick="hideLogin()">İptal</button>
-      <div id="errorMsg" style="color:red; font-size: 13px; margin-top: 10px;"></div>
-    </div>
+  <!-- GİRİŞ PENCERESİ -->
+  <div class="login-popup" id="loginPopup">
+    <h3>Giriş Yap</h3>
+    <input type="text" id="username" placeholder="Kullanıcı Adı">
+    <input type="password" id="password" placeholder="Şifre">
+    <button onclick="checkLogin()">Giriş</button>
   </div>
 
+  <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
+
   <script>
-    // Yoklama kayıt işlemi
+    // Liste Kaydetme
     let idCounter = localStorage.getItem("idCounter") || 1;
 
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
       e.preventDefault();
+
       const ogrNo = document.getElementById("ogrNo").value.trim();
       const adSoyad = document.getElementById("adSoyad").value.trim();
       if (!ogrNo || !adSoyad) return;
@@ -142,27 +139,27 @@
       document.getElementById("attendanceForm").reset();
     });
 
-    // Giriş işlemleri
+    // Giriş İşlemleri
     function showLogin() {
-      document.getElementById("loginModal").style.display = "flex";
+      document.getElementById("loginPopup").style.display = "block";
     }
 
-    function hideLogin() {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("errorMsg").textContent = "";
-    }
+    function checkLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    function validateLogin() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
       if (username === "ahmet.kuday" && password === "Bezmialem1845") {
         window.location.href = "liste.html";
       } else {
-        document.getElementById("errorMsg").textContent = "Kullanıcı adı veya şifre hatalı.";
+        alert("Kullanıcı adı veya şifre hatalı!");
       }
     }
+
+    // Her URL’de görünürlüğü garantile
+    document.addEventListener("DOMContentLoaded", function () {
+      const adminBtn = document.querySelector('.admin-button');
+      if (adminBtn) adminBtn.style.display = "block";
+    });
   </script>
 
 </body>
