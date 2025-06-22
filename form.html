@@ -130,6 +130,7 @@
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
   <script>
+
     let idCounter = localStorage.getItem("idCounter") || 1;
 
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
@@ -195,7 +196,36 @@
       const adminBtn = document.querySelector('.admin-button');
       if (adminBtn) adminBtn.style.display = "block";
     });
+
   </script>
+
+<script>
+  // Zaman damgası kontrolü – 60 saniyeyi geçtiyse formu gösterme
+  const params = new URLSearchParams(window.location.search);
+  const timestamp = parseInt(params.get("t"));
+
+  if (!timestamp || isNaN(timestamp)) {
+    document.body.innerHTML = `
+      <div style="text-align:center; padding-top:100px; font-family:Arial;">
+        <h2 style="color:red;">Geçersiz bağlantı.</h2>
+        <p>Bu sayfaya doğrudan erişim engellenmiştir. Lütfen QR kod ile erişiniz.</p>
+      </div>
+    `;
+  } else {
+    const now = Date.now();
+    const fark = (now - timestamp) / 1000;
+
+    if (fark > 60) {
+      document.body.innerHTML = `
+        <div style="text-align:center; padding-top:100px; font-family:Arial;">
+          <h2 style="color:red;">Yoklama bağlantısının süresi dolmuştur.</h2>
+          <p>Lütfen güncel QR kodu kullanınız.</p>
+        </div>
+      `;
+    }
+  }
+</script>
+
 
 </body>
 </html>
