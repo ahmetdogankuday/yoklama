@@ -54,6 +54,9 @@
       color: #777;
       text-align: center;
     }
+    .admin-button {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -70,9 +73,17 @@
   </form>
 
   <div class="success" id="successMsg"></div>
+
+  <!-- Copyright -->
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
+  <!-- Admin Giriş Butonu -->
+  <div class="admin-button">
+    <button onclick="goToList()">İmza Listesine Git</button>
+  </div>
+
   <script>
+    // Yoklama Kaydetme
     let idCounter = localStorage.getItem("idCounter") || 1;
 
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
@@ -104,6 +115,18 @@
       document.getElementById("successMsg").textContent = "Yoklama başarıyla kaydedildi.";
       document.getElementById("attendanceForm").reset();
     });
+
+    // Admin Giriş Fonksiyonu
+    function goToList() {
+      const username = prompt("Kullanıcı Adı:");
+      const password = prompt("Şifre:");
+
+      if (username === "ahmet.kuday" && password === "Bezmialem1845") {
+        window.location.href = "liste.html";
+      } else {
+        alert("Kullanıcı adı veya şifre hatalı!");
+      }
+    }
   </script>
 
 </body>
