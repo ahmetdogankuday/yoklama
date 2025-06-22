@@ -20,18 +20,18 @@
       padding-top: 0px;
     }
 
-/* Soft Blur Layer */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.6); /* saydamlık katmanı */
-  backdrop-filter: blur(4px); /* soft blur */
-  z-index: -1;
-}
+    /* Soft Blur Layer */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.6); /* saydamlık katmanı */
+      backdrop-filter: blur(4px); /* soft blur */
+      z-index: -1;
+    }
 
     .container {
       background: white;
@@ -80,6 +80,20 @@ body::before {
       display: inline-block;
       cursor: pointer;
     }
+
+    .admin-button {
+      margin-top: 20px;
+    }
+
+    .admin-button button {
+      background-color: #8D1F41;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -94,6 +108,10 @@ body::before {
     </a>
 
     <div class="footer">Yoklama için QR kodu <b>tarayınız</b>/<b>üzerine tıklayınız</b>.</div>
+
+    <div class="admin-button">
+      <button onclick="window.location.href='liste.html'">İmza Listesine Git</button>
+    </div>
   </div>
 
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
