@@ -1,5 +1,3 @@
-// login.js
-
 // Giriş popup'ını göster
 function showLogin() {
   const popup = document.getElementById("loginPopup");
@@ -30,23 +28,22 @@ function checkLogin() {
 
   if (isValid) {
     localStorage.setItem("authenticated", "true");
-    localStorage.setItem("fromForm", "true");
+    localStorage.setItem("fromLogin", "true"); // ✅ fromForm yerine fromLogin
     window.location.href = "liste.html";
   } else {
     alert("Kullanıcı adı veya şifre hatalı!");
   }
 }
 
-// Liste sayfasında koruma sağla
+// Liste sayfasında koruma
 function enforceAuthentication() {
-  const fromForm = localStorage.getItem("fromForm");
   const isAuthenticated = localStorage.getItem("authenticated");
+  const fromLogin = localStorage.getItem("fromLogin");
 
-  if (!isAuthenticated || fromForm !== "true") {
+  if (!isAuthenticated || fromLogin !== "true") {
     alert("Bu sayfayı görüntülemek için giriş yapmalısınız.");
     window.location.href = "form.html";
   } else {
-    // Giriş başarılıysa flag'i sil
-    localStorage.removeItem("fromForm");
+    localStorage.removeItem("fromLogin"); // ✅ temizleme
   }
 }
