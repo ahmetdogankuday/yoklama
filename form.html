@@ -16,19 +16,17 @@
       margin: 0;
     }
 
-/* Soft Blur Layer */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.6); /* saydamlık katmanı */
-  backdrop-filter: blur(4px); /* soft blur */
-  z-index: -1;
-}
-
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: -1;
+    }
 
     h1 {
       color: #8D1F41;
@@ -104,11 +102,9 @@ body::before {
 </head>
 <body>
 
-  <!-- LOGO -->
   <img class="logo" src="logo-black.png" alt="Bezmialem Logo">
   <h1>Ders Yoklama Formu</h1>
 
-  <!-- FORM -->
   <form id="attendanceForm">
     <input type="number" id="ogrNo" placeholder="Okul Numarası" required>
     <input type="text" id="adSoyad" placeholder="Ad Soyad" required>
@@ -117,12 +113,10 @@ body::before {
 
   <div class="success" id="successMsg"></div>
 
-  <!-- İMZA LİSTESİ BUTONU -->
   <div class="admin-button">
     <button onclick="showLogin()">İmza Listesine Git</button>
   </div>
 
-  <!-- GİRİŞ PENCERESİ -->
   <div class="login-popup" id="loginPopup">
     <h3 style="margin-bottom: 20px;">Giriş Yap</h3>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
@@ -132,11 +126,10 @@ body::before {
       <button onclick="resetLogin()">İptal</button>
     </div>
   </div>
-  
+
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
   <script>
-    // Liste Kaydetme
     let idCounter = localStorage.getItem("idCounter") || 1;
 
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
@@ -168,7 +161,6 @@ body::before {
       document.getElementById("attendanceForm").reset();
     });
 
-    // Giriş İşlemleri
     function showLogin() {
       document.getElementById("loginPopup").style.display = "block";
     }
@@ -185,6 +177,8 @@ body::before {
       const isValid = validLogins.some(user => user.username === username && user.password === password);
 
       if (isValid) {
+        localStorage.setItem("authenticated", "true");
+        localStorage.setItem("fromForm", "true");
         window.location.href = "liste.html";
       } else {
         alert("Kullanıcı adı veya şifre hatalı!");
@@ -197,7 +191,6 @@ body::before {
       document.getElementById("password").value = "";
     }
 
-    // Her URL’de görünürlüğü garantile
     document.addEventListener("DOMContentLoaded", function () {
       const adminBtn = document.querySelector('.admin-button');
       if (adminBtn) adminBtn.style.display = "block";
