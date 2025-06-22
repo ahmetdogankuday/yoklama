@@ -103,11 +103,9 @@
     <div class="login-box">
       <h3>Giriş Yap</h3>
       <input type="text" id="username" placeholder="Kullanıcı Adı"><br><br>
-      <div id="passwordSection" style="display: none;">
-        <input type="password" id="password" placeholder="Şifre"><br><br>
-        <button onclick="validateLogin()">Giriş</button>
-        <button onclick="hideLogin()">İptal</button>
-      </div>
+      <input type="password" id="password" placeholder="Şifre"><br><br>
+      <button onclick="validateLogin()">Giriş</button>
+      <button onclick="hideLogin()">İptal</button>
       <div id="errorMsg" style="color:red; font-size: 13px; margin-top: 10px;"></div>
     </div>
   </div>
@@ -147,35 +145,22 @@
     // Giriş işlemleri
     function showLogin() {
       document.getElementById("loginModal").style.display = "flex";
-      document.getElementById("username").focus();
     }
 
     function hideLogin() {
       document.getElementById("loginModal").style.display = "none";
       document.getElementById("username").value = "";
       document.getElementById("password").value = "";
-      document.getElementById("passwordSection").style.display = "none";
       document.getElementById("errorMsg").textContent = "";
     }
 
-    document.getElementById("username").addEventListener("keyup", function(e) {
-      if (e.key === "Enter") {
-        if (this.value === "ahmet.kuday") {
-          document.getElementById("passwordSection").style.display = "block";
-          document.getElementById("password").focus();
-          document.getElementById("errorMsg").textContent = "";
-        } else {
-          document.getElementById("errorMsg").textContent = "Kullanıcı adı hatalı.";
-        }
-      }
-    });
-
     function validateLogin() {
+      const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
-      if (password === "Bezmialem1845") {
+      if (username === "ahmet.kuday" && password === "Bezmialem1845") {
         window.location.href = "liste.html";
       } else {
-        document.getElementById("errorMsg").textContent = "Şifre hatalı.";
+        document.getElementById("errorMsg").textContent = "Kullanıcı adı veya şifre hatalı.";
       }
     }
   </script>
