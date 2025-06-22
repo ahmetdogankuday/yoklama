@@ -95,6 +95,13 @@ body::before {
       background-color: #f9f9f9;
     }
 
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #000000;
+      text-align: center;
+    }
+    
     .search-bar {
       margin-bottom: 20px;
     }
@@ -141,7 +148,8 @@ body::before {
   <button onclick="window.location.href='https://ahmetdogankuday.github.io/yoklama/index.html'">Anasayfa</button>
 </div>
 
-  
+<div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
+
   <script>
     const tableBody = document.getElementById("tableBody");
     const searchInput = document.getElementById("searchInput");
@@ -212,6 +220,7 @@ body::before {
 
       renderTable(data);
     }
+
 
     searchInput.addEventListener("input", function () {
       const query = this.value.toLowerCase();
