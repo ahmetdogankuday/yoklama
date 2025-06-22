@@ -34,7 +34,7 @@
     button {
       background-color: #8D1F41;
       color: white;
-      padding: 10px;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       font-size: 16px;
@@ -60,19 +60,27 @@
     .login-popup {
       display: none;
       position: fixed;
-      top: 30%;
+      top: 40%;
       left: 50%;
       transform: translate(-50%, -30%);
       background-color: white;
-      padding: 25px;
+      padding: 55px;
       border: 1px solid #ccc;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       z-index: 999;
+      width: 450px;
+      text-align: center;
     }
     .login-popup input {
       margin-bottom: 10px;
       width: 100%;
+    }
+    .login-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -92,18 +100,21 @@
   <div class="success" id="successMsg"></div>
 
   <!-- İMZA LİSTESİ BUTONU -->
-  <div class="admin-button" style="display: block;">
+  <div class="admin-button">
     <button onclick="showLogin()">İmza Listesine Git</button>
   </div>
 
   <!-- GİRİŞ PENCERESİ -->
   <div class="login-popup" id="loginPopup">
-    <h3>Giriş Yap</h3>
+    <h3 style="margin-bottom: 20px;">Giriş Yap</h3>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
     <input type="password" id="password" placeholder="Şifre">
-    <button onclick="checkLogin()">Giriş</button>
+    <div class="login-buttons">
+      <button onclick="checkLogin()">Giriş</button>
+      <button onclick="resetLogin()">İptal</button>
+    </div>
   </div>
-
+  
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
   <script>
@@ -148,11 +159,24 @@
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      if (username === "ahmet.kuday" && password === "Bezmialem1845") {
+      const validLogins = [
+        { username: "ahmet.kuday", password: "Bezmialem1845" },
+        { username: "mihri", password: "mihri<3" }
+      ];
+
+      const isValid = validLogins.some(user => user.username === username && user.password === password);
+
+      if (isValid) {
         window.location.href = "liste.html";
       } else {
         alert("Kullanıcı adı veya şifre hatalı!");
       }
+    }
+
+    function resetLogin() {
+      document.getElementById("loginPopup").style.display = "none";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
     }
 
     // Her URL’de görünürlüğü garantile
