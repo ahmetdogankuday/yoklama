@@ -129,10 +129,10 @@
 
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
+  <script src="login.js"></script>
   <script>
     let idCounter = localStorage.getItem("idCounter") || 1;
 
-    // 40 dakikalık kılıt kontrolü
     const kilitZamani = localStorage.getItem("yoklamaKilidiZamani");
     if (kilitZamani) {
       const suAn = Date.now();
@@ -149,7 +149,6 @@
       }
     }
 
-    // Token kontrolü
     const params = new URLSearchParams(window.location.search);
     const timestamp = parseInt(params.get("t"));
     const now = Date.now();
@@ -223,41 +222,6 @@
       document.getElementById("ogrNo").disabled = true;
       document.getElementById("adSoyad").disabled = true;
       document.querySelector("button[type='submit']").disabled = true;
-    });
-
-    function showLogin() {
-      document.getElementById("loginPopup").style.display = "block";
-    }
-
-    function checkLogin() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      const validLogins = [
-        { username: "ahmet.kuday", password: "Bezmialem1845" },
-        { username: "mihri", password: "mihri53" }
-      ];
-
-      const isValid = validLogins.some(user => user.username === username && user.password === password);
-
-      if (isValid) {
-        localStorage.setItem("authenticated", "true");
-        localStorage.setItem("fromForm", "true");
-        window.location.href = "liste.html";
-      } else {
-        alert("Kullanıcı adı veya şifre hatalı!");
-      }
-    }
-
-    function resetLogin() {
-      document.getElementById("loginPopup").style.display = "none";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const adminBtn = document.querySelector('.admin-button');
-      if (adminBtn) adminBtn.style.display = "block";
     });
   </script>
 
