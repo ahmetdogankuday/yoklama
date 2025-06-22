@@ -159,9 +159,12 @@
   <div class="success" id="successMsg"></div>
 
   <div class="admin-button">
-    <button onclick="showLogin()">İmza Listesine Git</button>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="showLogin()">İmza Listesine Git</button>
+      <button onclick="window.location.href='https://ahmetdogankuday.github.io/yoklama/index.html'">Anasayfa</button>
+    </div>
   </div>
-
+  
   <div class="login-popup" id="loginPopup">
     <h3 style="margin-bottom: 20px;">Giriş Yap</h3>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
