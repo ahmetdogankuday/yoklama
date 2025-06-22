@@ -1,3 +1,19 @@
+<script>
+  const fromForm = localStorage.getItem("fromForm");
+  const isAuthenticated = localStorage.getItem("authenticated");
+
+  // Eğer doğrudan geldiyse ve giriş yapılmamışsa form.html'e yönlendir
+  if (!isAuthenticated || fromForm !== "true") {
+    // Giriş yapılmamışsa veya form.html'den gelinmemişse
+    alert("Bu sayfayı görüntülemek için giriş yapmalısınız.");
+    window.location.href = "form.html";
+  } else {
+    // liste.html açıldıktan sonra flag'i temizle (güvenlik için)
+    localStorage.removeItem("fromForm");
+  }
+</script>
+
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
