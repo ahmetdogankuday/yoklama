@@ -2,15 +2,19 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobil uyum için gerekli -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Yoklama Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="login.js"></script>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -18,6 +22,7 @@
       min-height: 100vh;
       background: url('kampus1.jpg') no-repeat center center fixed;
       background-size: cover;
+      background-attachment: fixed;
       position: relative;
     }
 
@@ -139,6 +144,10 @@
 
     /* Mobil görünüm iyileştirmeleri */
     @media (max-width: 480px) {
+      body {
+        background-attachment: scroll; /* iOS ve bazı mobil cihazlarda "fixed" arka plan görünmez */
+      }
+
       .container {
         padding: 20px 10px;
         max-width: 95%;
