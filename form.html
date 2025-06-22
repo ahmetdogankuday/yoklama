@@ -132,61 +132,65 @@
   <script>
     let idCounter = localStorage.getItem("idCounter") || 1;
 
-    // ⏱ Formu tekrar kullanmaya karşı kilitle
-    const yoklamaAlindi = localStorage.getItem("yoklamaAlindi");
-    if (yoklamaAlindi === "true") {
-      window.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("ogrNo").disabled = true;
-        document.getElementById("adSoyad").disabled = true;
-        document.querySelector("button[type='submit']").disabled = true;
-        document.getElementById("successMsg").textContent = "Yoklamanız daha önce alınmıştır.";
-      });
+    // 40 dakikalık kılıt kontrolü
+    const kilitZamani = localStorage.getItem("yoklamaKilidiZamani");
+    if (kilitZamani) {
+      const suAn = Date.now();
+      const farkMs = suAn - parseInt(kilitZamani);
+      const kilitSuresiMs = 40 * 60 * 1000;
+
+      if (farkMs < kilitSuresiMs) {
+        window.addEventListener("DOMContentLoaded", () => {
+          document.getElementById("ogrNo").disabled = true;
+          document.getElementById("adSoyad").disabled = true;
+          document.querySelector("button[type='submit']").disabled = true;
+          document.getElementById("successMsg").textContent = "Yoklamanız daha önce alınmıştır.";
+        });
+      }
     }
 
-    // 🕒 Token geçerlilik kontrolü (sayfa yüklendiğinde)
+    // Token kontrolü
     const params = new URLSearchParams(window.location.search);
     const timestamp = parseInt(params.get("t"));
     const now = Date.now();
     const fark = (now - timestamp) / 1000;
 
     if (!timestamp || isNaN(timestamp)) {
-
       document.body.innerHTML = `
-  <div style="text-align:center; padding-top:100px; font-family:Arial;">
-    <h2 style="color:red;">Geçersiz bağlantı.</h2>
-    <p>Bu sayfaya doğrudan erişim engellenmiştir. Lütfen QR kod ile erişiniz.</p>
-    <br>
-    <a href="https://ahmetdogankuday.github.io/yoklama/index.html" style="
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background-color: #8D1F41;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-    ">
-      Ana Sayfaya Dön
-    </a>
-  </div>
-`;
+        <div style="text-align:center; padding-top:100px; font-family:Arial;">
+          <h2 style="color:red;">Geçersiz bağlantı.</h2>
+          <p>Bu sayfaya doğrudan erişim engellenmiştir. Lütfen QR kod ile erişiniz.</p>
+          <br>
+          <a href="https://ahmetdogankuday.github.io/yoklama/index.html" style="
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #8D1F41;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+          ">
+            Ana Sayfaya Dön
+          </a>
+        </div>
+      `;
     } else if (fark > 60) {
       document.body.innerHTML = `
         <div style="text-align:center; padding-top:100px; font-family:Arial;">
-          <h2 style="color:red;">Yoklama bağlantısının süresi dolmuştur.</h2>
+          <h2 style="color:red;">Yoklama bağlantısının süre dolmuştur.</h2>
           <p>Lütfen güncel QR kodu kullanınız.</p>
         </div>
       `;
     }
 
-    // 📥 Form gönderme işlemi
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const nowSubmit = Date.now();
       const farkSubmit = (nowSubmit - timestamp) / 1000;
       if (isNaN(timestamp) || farkSubmit > 60) {
-        alert("Yoklama bağlantısının süresi dolmuştur. Lütfen yeni bir QR kodu kullanınız.");
+        alert("Yoklama bağlantısının süre dolmuştur. Lütfen yeni bir QR kodu kullanınız.");
         return;
       }
 
@@ -211,7 +215,8 @@
       liste.push(kayit);
       localStorage.setItem("yoklamaVerileri", JSON.stringify(liste));
 
-      localStorage.setItem("yoklamaAlindi", "true");
+      localStorage.setItem("yoklamaKilidiZamani", Date.now().toString());
+
       document.getElementById("successMsg").textContent = "Yoklama başarıyla kaydedildi.";
       document.getElementById("attendanceForm").reset();
 
