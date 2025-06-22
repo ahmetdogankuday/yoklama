@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobil uyum için gerekli -->
   <title>QR Yoklama Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="login.js"></script>
@@ -94,7 +95,6 @@
       cursor: pointer;
     }
 
-    /* Giriş popup stilleri */
     .login-popup {
       display: none;
       position: fixed;
@@ -135,6 +135,40 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
+    }
+
+    /* Mobil görünüm iyileştirmeleri */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 10px;
+        max-width: 95%;
+      }
+
+      .logo {
+        max-width: 140px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .footer {
+        font-size: 12px;
+      }
+
+      .admin-button button {
+        font-size: 13px;
+        padding: 8px 16px;
+      }
+
+      .login-popup {
+        padding: 20px;
+      }
+
+      .login-buttons button {
+        padding: 8px 20px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
