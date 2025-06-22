@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yoklama Listesi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #8D1F41;
+    }
+
+    .top-right-buttons {
+      position: absolute;
+      top: 100px;
+      right: 100px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      background-color: #8D1F41;
+      color: white;
+      cursor: pointer;
+    }
+
+    .download-button {
+      position: relative;
+      display: inline-block;
+    }
+
+    table {
+      width: 90%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #8D1F41;
+      color: white;
+      cursor: pointer;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class="top-right-buttons">
+    <button onclick="exportToPDF()">PDF</button>
+
+  <div class="download-button">
+      <button onclick="exportToExcel()">Excel</button>
+    </div>
+  </div>
+</div>
+  
+  <h1>Yoklama Listesi</h1>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="İsim ya da Okul No ile ara...">
+  </div>
+
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">ID</th>
+        <th onclick="sortTable(1)">Tarih/Saat</th>
+        <th onclick="sortTable(2)">Okul No</th>
+        <th onclick="sortTable(3)">Ad Soyad</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Veriler buraya gelecek -->
+    </tbody>
+  </table>
+
+  <div style="margin-top: 20px; text-align: center;">
+    <button onclick="clearList()">Listeyi Temizle</button>
+  </div>
+
+
+  <script>
+    const tableBody = document.getElementById("tableBody");
+    const searchInput = document.getElementById("searchInput");
+
+  function clearList() {
+  const confirmClear = confirm("Bu işlem tüm listeyi silecek. Emin misiniz?");
+  if (confirmClear) {
+    localStorage.removeItem("yoklamaVerileri");
+    renderTable([]);
+    alert("Liste temizlendi.");
+  }
+}
+
+    let data = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
+
+    function renderTable(veriler) {
+      tableBody.innerHTML = "";
+      veriler.forEach((veri, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${veri.tarih}</td>
+          <td>${veri.okulNo}</td>
+          <td>${veri.adSoyad}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    renderTable(data);
+
+    searchInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase();
+      const filtered = data.filter(item =>
+        item.adSoyad.toLowerCase().includes(query) ||
+        item.okulNo.toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    });
+
+    function sortTable(n) {
+      const table = document.getElementById("attendanceTable");
+      let switching = true;
+      let dir = "asc";
+      let switchcount = 0;
+
+      while (switching) {
+        switching = false;
+        let rows = table.rows;
+        for (let i = 1; i < (rows.length - 1); i++) {
+          let shouldSwitch = false;
+          let x = rows[i].getElementsByTagName("TD")[n];
+          let y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let xVal = isNaN(x.innerHTML) ? x.innerHTML.toLowerCase() : Number(x.innerHTML);
+          let yVal = isNaN(y.innerHTML) ? y.innerHTML.toLowerCase() : Number(y.innerHTML);
+
+          if ((dir === "asc" && xVal > yVal) || (dir === "desc" && xVal < yVal)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount === 0 && dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    function exportToExcel() {
+      let table = document.getElementById("attendanceTable").outerHTML;
+      let dataType = 'application/vnd.ms-excel';
+      let tableHTML = table.replace(/ /g, '%20');
+
+      let link = document.createElement("a");
+      link.href = 'data:' + dataType + ', ' + tableHTML;
+      link.download = 'yoklama_listesi.xls';
+      link.click();
+    }
+
+    function exportToPDF() {
+      const table = document.getElementById("attendanceTable");
+      const win = window.open('', '', 'height=700,width=900');
+      win.document.write('<html><head><title>Yoklama PDF</title>');
+      win.document.write('<style>table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #ccc;padding: 8px;text-align: center;} th {background-color: #eee;}</style>');
+      win.document.write('</head><body >');
+      win.document.write('<h2>Yoklama Listesi</h2>');
+      win.document.write(table.outerHTML);
+      win.document.write('</body></html>');
+      win.document.close();
+      win.print();
+    }
+
+  </script>
+</body>
+</html>

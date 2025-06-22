@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Yoklama Sistemi</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      text-align: center;
+      width: 90%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 180px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #8D1F41;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    #qrcode {
+      margin: auto;
+    }
+
+    .footer {
+      font-size: 14px;
+      margin-top: 15px;
+      color: #333;
+      font-style: italic;
+    }
+
+    .copyright {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+
+    a#qrLink {
+      display: inline-block;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="logo-black.png" alt="Bezmialem Logo" class="logo">
+    <h1>EduQR Yoklama Sistemi</h1>
+
+    <!-- Tıklanabilir QR -->
+    <a id="qrLink" href="#" target="_blank">
+      <div id="qrcode"></div>
+    </a>
+
+    <div class="footer">Yoklama için QR kodu <b>tarayınız</b>/<b>üzerine tıklayınız</b>.</div>
+  </div>
+
+  <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
+
+  <script>
+    function generateToken() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function updateQRCode() {
+      const token = generateToken();
+      const url = `https://ahmetdogankuday.github.io/yoklama/form.html?token=${token}`;
+
+      // Bağlantıyı güncelle
+      const linkEl = document.getElementById("qrLink");
+      linkEl.href = url;
+
+      // QR kodu güncelle
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: url,
+        width: 200,
+        height: 200,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    updateQRCode();             // Sayfa açıldığında QR üret
+    setInterval(updateQRCode, 5000); // Her 5 saniyede bir yenile
+  </script>
+
+</body>
+</html>
