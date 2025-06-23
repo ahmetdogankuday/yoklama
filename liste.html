@@ -179,21 +179,42 @@
     const searchInput = document.getElementById("searchInput");
     let data = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
 
-    function renderTable(veriler) {
-      tableBody.innerHTML = "";
-      veriler.forEach((veri, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td><input type="checkbox" class="rowCheckbox"></td>
-          <td>${index + 1}</td>
-          <td>${veri.tarih}</td>
-          <td>${veri.okulNo}</td>
-          <td>${veri.adSoyad}</td>
-          <td><button onclick="deleteRow(${index})">Sil</button></td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
+function renderTable(veriler) {
+  tableBody.innerHTML = "";
+  veriler.forEach((veri, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
+      <td>${index + 1}</td>
+      <td>${veri.tarih}</td>
+      <td>${veri.okulNo}</td>
+      <td>${veri.adSoyad}</td>
+      <td><button onclick="deleteRow(${index})">Sil</button></td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  // Tablonun yeniden çizilmesinden sonra kontrol et
+  updateSelectAllStatus();
+}
+
+function toggleSelectAll(masterCheckbox) {
+  const checkboxes = document.querySelectorAll('.rowCheckbox');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = masterCheckbox.checked;
+  });
+}
+
+function updateSelectAllStatus() {
+  const allCheckboxes = document.querySelectorAll('.rowCheckbox');
+  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+  if (allCheckboxes.length === 0) {
+    selectAllCheckbox.checked = false;
+    return;
+  }
+  const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+  selectAllCheckbox.checked = allChecked;
+}
 
     function deleteRow(index) {
       data.splice(index, 1);
