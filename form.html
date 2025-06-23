@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobil uyum -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yoklama Formu</title>
   <style>
     body {
@@ -127,6 +127,25 @@
       min-width: 100px;
     }
 
+    #popupOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 998;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #8D1F41;
+      cursor: pointer;
+    }
+
     .copyright {
       margin-top: 30px;
       font-size: 12px;
@@ -164,8 +183,11 @@
       <button onclick="showLogin()">İmza Listesine Git</button>
     </div>
   </div>
-  
+
+  <div id="popupOverlay" onclick="resetLogin()"></div>
+
   <div class="login-popup" id="loginPopup">
+    <span class="close-btn" onclick="resetLogin()">&times;</span>
     <h2 style="margin-bottom: 20px; color: #8D1F41;">Giriş Yap</h2>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
     <input type="password" id="password" placeholder="Şifre">
@@ -270,6 +292,20 @@
       document.getElementById("ogrNo").disabled = true;
       document.getElementById("adSoyad").disabled = true;
       document.querySelector("button[type='submit']").disabled = true;
+    });
+
+    function showLogin() {
+      document.getElementById("loginPopup").style.display = "block";
+      document.getElementById("popupOverlay").style.display = "block";
+    }
+
+    function resetLogin() {
+      document.getElementById("loginPopup").style.display = "none";
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") resetLogin();
     });
   </script>
 
