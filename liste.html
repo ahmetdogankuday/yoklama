@@ -212,11 +212,14 @@
       document.getElementById("selectToggleBtn").textContent = allChecked ? "Seçimi Kaldır" : "Tümünü Seç";
     }
 
-    function deleteRow(index) {
-      data.splice(index, 1);
-      localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
-      renderTable(data);
-    }
+function deleteRow(index) {
+  const confirmed = confirm("Bu kaydı silmek istediğinizden emin misiniz?");
+  if (!confirmed) return;
+
+  data.splice(index, 1);
+  localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
+  renderTable(data);
+}
 
     function deleteSelectedRows() {
       const checkboxes = document.querySelectorAll(".rowCheckbox");
