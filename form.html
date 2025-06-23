@@ -55,13 +55,19 @@
       margin-bottom: 10px;
     }
 
-    input[type="text"], input[type="number"], input[type="password"] {
+    input[type="text"], input[type="number"], input[type="password"], select {
       padding: 12px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 16px;
       width: 100%;
       box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    select {
+      background-color: #fff;
+      color: #333;
     }
 
     button {
@@ -172,6 +178,15 @@
   <form id="attendanceForm">
     <img class="logo" src="logo-black.png" alt="Bezmialem Logo">
     <h1>Ders Yoklama Formu</h1>
+
+    <select id="dersSecimi" required>
+      <option value="" disabled selected>Ders Seçiniz</option>
+      <option value="Acil Hasta Bakımı I">Acil Hasta Bakımı I</option>
+      <option value="Acil Hasta Bakımı II">Acil Hasta Bakımı II</option>
+      <option value="Acil Hasta Bakımı III">Acil Hasta Bakımı III</option>
+      <option value="Acil Hasta Bakımı IV">Acil Hasta Bakımı IV</option>
+    </select>
+
     <input type="number" id="ogrNo" placeholder="Okul Numarası" required>
     <input type="text" id="adSoyad" placeholder="Ad Soyad" required>
     <button type="submit">Gönder</button>
@@ -186,10 +201,8 @@
     </div>
   </div>
 
-  <!-- Karartma arka plan -->
   <div class="login-overlay" id="loginOverlay" onclick="resetLogin()"></div>
 
-  <!-- Giriş popup -->
   <div class="login-popup" id="loginPopup">
     <button class="close-btn" onclick="resetLogin()">×</button>
     <h2 style="margin-bottom: 20px; color: #8D1F41;">Giriş Yap</h2>
@@ -217,6 +230,7 @@
         window.addEventListener("DOMContentLoaded", () => {
           document.getElementById("ogrNo").disabled = true;
           document.getElementById("adSoyad").disabled = true;
+          document.getElementById("dersSecimi").disabled = true;
           document.querySelector("button[type='submit']").disabled = true;
           document.getElementById("successMsg").textContent = "Yoklamanız daha önce alınmıştır.";
         });
@@ -267,9 +281,11 @@
         return;
       }
 
+      const ders = document.getElementById("dersSecimi").value;
       const ogrNo = document.getElementById("ogrNo").value.trim();
       const adSoyad = document.getElementById("adSoyad").value.trim();
-      if (!ogrNo || !adSoyad) return;
+
+      if (!ders || !ogrNo || !adSoyad) return;
 
       const tarihSaat = new Date().toLocaleString('tr-TR', {
         day: '2-digit', month: 'long', year: 'numeric',
@@ -279,6 +295,7 @@
       const kayit = {
         id: idCounter++,
         tarih: tarihSaat,
+        ders: ders,
         okulNo: ogrNo,
         adSoyad: adSoyad
       };
@@ -292,6 +309,7 @@
       document.getElementById("successMsg").textContent = "Yoklama başarıyla kaydedildi.";
       document.getElementById("attendanceForm").reset();
 
+      document.getElementById("dersSecimi").disabled = true;
       document.getElementById("ogrNo").disabled = true;
       document.getElementById("adSoyad").disabled = true;
       document.querySelector("button[type='submit']").disabled = true;
@@ -314,6 +332,5 @@
       if (e.key === "Escape") resetLogin();
     });
   </script>
-
 </body>
 </html>
