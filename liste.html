@@ -155,7 +155,7 @@
   <table id="attendanceTable">
     <thead>
       <tr>
-        <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+        <th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>
         <th onclick="sortTable(0)">ID</th>
         <th onclick="sortTable(1)">Tarih/Saat</th>
         <th onclick="sortTable(2)">Okul No</th>
@@ -167,7 +167,7 @@
   </table>
 
   <div class="action-buttons">
-    <button onclick="deleteSelected()">Seçilenleri Sil</button>
+    <button onclick="deleteSelectedRows()">Seçilenleri Sil</button>
     <button onclick="clearList()">Listeyi Temizle</button>
     <button onclick="window.location.href='https://ahmetdogankuday.github.io/yoklama/index.html'">Anasayfa</button>
   </div>
@@ -184,7 +184,7 @@
       veriler.forEach((veri, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><input type="checkbox" class="rowCheckbox" data-index="${index}"></td>
+          <td><input type="checkbox" class="rowCheckbox"></td>
           <td>${index + 1}</td>
           <td>${veri.tarih}</td>
           <td>${veri.okulNo}</td>
@@ -195,42 +195,30 @@
       });
     }
 
-    function clearList() {
-      const confirmClear = confirm("Bu işlem tüm listeyi silecek. Emin misiniz?");
-      if (confirmClear) {
-        localStorage.removeItem("yoklamaVerileri");
-        data = [];
-        renderTable(data);
-        alert("Liste temizlendi.");
-      }
-    }
-
     function deleteRow(index) {
-      const confirmDelete = confirm("Bu kaydı silmek istediğinizden emin misiniz?");
-      if (confirmDelete) {
-        data.splice(index, 1);
-        localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
-        renderTable(data);
-      }
-    }
-
-    function deleteSelected() {
-      const selected = document.querySelectorAll(".rowCheckbox:checked");
-      if (selected.length === 0) {
-        alert("Lütfen silmek için en az bir kayıt seçin.");
-        return;
-      }
-      const confirmDelete = confirm("Seçilen kayıtları silmek istediğinizden emin misiniz?");
-      if (!confirmDelete) return;
-      const indices = Array.from(selected).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a);
-      indices.forEach(i => data.splice(i, 1));
+      data.splice(index, 1);
       localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
       renderTable(data);
     }
 
-    function toggleSelectAll(source) {
+    function deleteSelectedRows() {
       const checkboxes = document.querySelectorAll(".rowCheckbox");
-      checkboxes.forEach(cb => cb.checked = source.checked);
+      const newData = [];
+      data.forEach((item, index) => {
+        if (!checkboxes[index].checked) {
+          newData.push(item);
+        }
+      });
+      data = newData;
+      localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
+      renderTable(data);
+    }
+
+    function toggleSelectAll(masterCheckbox) {
+      const checkboxes = document.querySelectorAll('.rowCheckbox');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = masterCheckbox.checked;
+      });
     }
 
     let currentSortColumn = null;
@@ -243,19 +231,35 @@
         currentSortColumn = columnIndex;
         currentSortDirection = 'asc';
       }
+
       data.sort((a, b) => {
         let valA, valB;
         switch (columnIndex) {
-          case 0: valA = data.indexOf(a) + 1; valB = data.indexOf(b) + 1; break;
-          case 1: valA = new Date(a.tarih); valB = new Date(b.tarih); break;
-          case 2: valA = a.okulNo.toString(); valB = b.okulNo.toString(); break;
-          case 3: valA = a.adSoyad.toLowerCase(); valB = b.adSoyad.toLowerCase(); break;
-          default: valA = ""; valB = "";
+          case 0:
+            valA = data.indexOf(a) + 1;
+            valB = data.indexOf(b) + 1;
+            break;
+          case 1:
+            valA = new Date(a.tarih);
+            valB = new Date(b.tarih);
+            break;
+          case 2:
+            valA = a.okulNo.toString();
+            valB = b.okulNo.toString();
+            break;
+          case 3:
+            valA = a.adSoyad.toLowerCase();
+            valB = b.adSoyad.toLowerCase();
+            break;
+          default:
+            valA = ""; valB = "";
         }
+
         if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
         if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
         return 0;
       });
+
       renderTable(data);
     }
 
