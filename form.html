@@ -152,7 +152,7 @@
       color: #8D1F41;
       cursor: pointer;
     }
-    
+
     .copyright {
       margin-top: 30px;
       font-size: 12px;
@@ -177,12 +177,14 @@
     <img class="logo" src="logo-black.png" alt="Bezmialem Logo">
     <h1>Ders Yoklama Formu</h1>
 
+    <select id="sinifSecimi" required onchange="guncelleDersSecenekleri()">
+      <option value="" disabled selected>Sınıf Seçiniz</option>
+      <option value="1">1. Sınıf</option>
+      <option value="2">2. Sınıf</option>
+    </select>
+
     <select id="dersSecimi" required>
       <option value="" disabled selected>Ders Seçiniz</option>
-      <option value="Acil Hasta Bakımı I">Acil Hasta Bakımı I</option>
-      <option value="Acil Hasta Bakımı II">Acil Hasta Bakımı II</option>
-      <option value="Acil Hasta Bakımı III">Acil Hasta Bakımı III</option>
-      <option value="Acil Hasta Bakımı IV">Acil Hasta Bakımı IV</option>
     </select>
 
     <input type="number" id="ogrNo" placeholder="Okul Numarası" required>
@@ -215,6 +217,30 @@
   <div class="copyright">© 2025 Ahmet Doğan Kuday – Tüm hakları saklıdır.</div>
 
   <script src="login.js"></script>
+
+  <script>
+    function guncelleDersSecenekleri() {
+      const sinif = document.getElementById("sinifSecimi").value;
+      const dersSecimi = document.getElementById("dersSecimi");
+
+      dersSecimi.innerHTML = '<option value="" disabled selected>Ders Seçiniz</option>';
+
+      let dersler = [];
+      if (sinif === "1") {
+        dersler = ["Acil Hasta Bakımı I", "Acil Hasta Bakımı II"];
+      } else if (sinif === "2") {
+        dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV"];
+      }
+
+      dersler.forEach(ders => {
+        const option = document.createElement("option");
+        option.value = ders;
+        option.textContent = ders;
+        dersSecimi.appendChild(option);
+      });
+    }
+  </script>
+  
   <script>
     let idCounter = localStorage.getItem("idCounter") || 1;
 
