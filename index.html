@@ -49,10 +49,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      z-index: 1;
     }
 
     .logo {
-      max-width: 180px;
+      max-width: 220px;
       margin-bottom: 10px;
     }
 
@@ -68,7 +69,7 @@
     }
 
     .footer {
-      font-size: 14px;
+      font-size: 13px;
       margin-top: 15px;
       color: #333;
       font-style: italic;
@@ -86,9 +87,9 @@
       cursor: pointer;
     }
 
-     .admin-button {
+    .admin-button {
       margin-top: 15px;
-      width: 90%;
+      width: 100%;
       max-width: 360px;
     }
 
@@ -102,22 +103,35 @@
       cursor: pointer;
     }
 
-   .login-popup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 40px 100px; /* Daha dengeli padding */
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-  width: 325px;
-  max-width: 90%;
-  text-align: center;
-}
+    /* Yarı saydam overlay arka plan */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 999;
+      display: none;
+    }
+
+    /* Giriş kutusu */
+    .login-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 40px 30px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      width: 325px;
+      max-width: 90%;
+      text-align: center;
+    }
 
     .login-popup input {
       width: 85%;
@@ -144,10 +158,20 @@
       cursor: pointer;
     }
 
-    /* Mobil görünüm iyileştirmeleri */
+    /* Sağ üst çarpı */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #8D1F41;
+      cursor: pointer;
+    }
+
     @media (max-width: 480px) {
       body {
-        background-attachment: scroll; /* iOS ve bazı mobil cihazlarda "fixed" arka plan görünmez */
+        background-attachment: scroll;
       }
 
       .container {
@@ -200,7 +224,12 @@
     </div>
   </div>
 
+  <!-- ARKA PLAN -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- GİRİŞ PENCERESİ -->
   <div class="login-popup" id="loginPopup">
+    <span class="close-btn" onclick="resetLogin()">×</span>
     <h2 style="margin-bottom: 20px; color: #8D1F41;">Giriş Yap</h2>
     <input type="text" id="username" placeholder="Kullanıcı Adı">
     <input type="password" id="password" placeholder="Şifre">
@@ -225,10 +254,8 @@
       const token = generateToken();
       const timestamp = Date.now();
       const url = `https://ahmetdogankuday.github.io/yoklama/form.html?token=${token}&t=${timestamp}`;
-
       const linkEl = document.getElementById("qrLink");
       linkEl.href = url;
-
       document.getElementById("qrcode").innerHTML = "";
       new QRCode(document.getElementById("qrcode"), {
         text: url,
@@ -237,6 +264,25 @@
         correctLevel: QRCode.CorrectLevel.H
       });
     }
+
+    function showLogin() {
+      document.getElementById("loginPopup").style.display = "block";
+      document.getElementById("overlay").style.display = "block";
+    }
+
+    function resetLogin() {
+      document.getElementById("loginPopup").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+    }
+
+    // ESC ile popup kapansın
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        resetLogin();
+      }
+    });
 
     updateQRCode();
     setInterval(updateQRCode, 5000);
