@@ -153,16 +153,21 @@
   </div>
 
   <table id="attendanceTable">
-    <thead>
-      <tr>
-        <th><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"></th>
-        <th onclick="sortTable(0)">ID</th>
-        <th onclick="sortTable(1)">Tarih/Saat</th>
-        <th onclick="sortTable(2)">Okul No</th>
-        <th onclick="sortTable(3)">Ad Soyad</th>
-        <th>İşlem</th>
-      </tr>
-    </thead>
+<thead>
+  <tr>
+    <th>
+      <label style="display: flex; align-items: center; gap: 6px;">
+        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+        <span style="font-weight: normal;">Tümünü Seç</span>
+      </label>
+    </th>
+    <th onclick="sortTable(0)">ID</th>
+    <th onclick="sortTable(1)">Tarih/Saat</th>
+    <th onclick="sortTable(2)">Okul No</th>
+    <th onclick="sortTable(3)">Ad Soyad</th>
+    <th>İşlem</th>
+  </tr>
+</thead>
     <tbody id="tableBody"></tbody>
   </table>
 
