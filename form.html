@@ -41,6 +41,7 @@
       flex-direction: column;
       align-items: center;
       z-index: 1;
+      margin-bottom: 15px;
     }
 
     .logo {
@@ -96,6 +97,17 @@
     .admin-button button {
       width: 100%;
     }
+
+  .admin-button-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.admin-button-row button {
+  flex: 1;
+}
 
     .login-overlay {
       display: none;
@@ -194,11 +206,12 @@
 
   <div class="success" id="successMsg"></div>
 
-  <div class="admin-button">
-      <button onclick="window.location.href='https://ahmetdogankuday.github.io/yoklama/index.html'">Anasayfa</button>
-      <button onclick="showLogin()">İmza Listesine Git</button>
-    </div>
+<div class="admin-button">
+  <div class="admin-button-row">
+    <button onclick="window.location.href='https://ahmetdogankuday.github.io/yoklama/index.html'">Anasayfa</button>
+    <button onclick="showLogin()">İmza Listesine Git</button>
   </div>
+</div>
 
   <div class="login-overlay" id="loginOverlay" onclick="resetLogin()"></div>
 
