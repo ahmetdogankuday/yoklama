@@ -153,21 +153,20 @@
   </div>
 
   <table id="attendanceTable">
-<thead>
-  <tr>
-    <th>
-      <label style="display: flex; align-items: center; gap: 6px;">
-        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
-        <span style="font-weight: normal;">Tümünü Seç</span>
-      </label>
-    </th>
-    <th onclick="sortTable(0)">ID</th>
-    <th onclick="sortTable(1)">Tarih/Saat</th>
-    <th onclick="sortTable(2)">Okul No</th>
-    <th onclick="sortTable(3)">Ad Soyad</th>
-    <th>İşlem</th>
-  </tr>
-</thead>
+    <thead>
+      <tr>
+        <th style="width: 80px;">
+          <button id="selectToggleBtn" onclick="toggleSelectAllRows()" style="padding: 6px 8px; font-size: 12px; background-color: #8D1F41; color: white; border: none; border-radius: 4px;">
+            Tümünü Seç
+          </button>
+        </th>
+        <th onclick="sortTable(0)">ID</th>
+        <th onclick="sortTable(1)">Tarih/Saat</th>
+        <th onclick="sortTable(2)">Okul No</th>
+        <th onclick="sortTable(3)">Ad Soyad</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
     <tbody id="tableBody"></tbody>
   </table>
 
@@ -183,43 +182,38 @@
     const tableBody = document.getElementById("tableBody");
     const searchInput = document.getElementById("searchInput");
     let data = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
+    let allSelected = false;
 
-function renderTable(veriler) {
-  tableBody.innerHTML = "";
-  veriler.forEach((veri, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
-      <td>${index + 1}</td>
-      <td>${veri.tarih}</td>
-      <td>${veri.okulNo}</td>
-      <td>${veri.adSoyad}</td>
-      <td><button onclick="deleteRow(${index})">Sil</button></td>
-    `;
-    tableBody.appendChild(row);
-  });
+    function renderTable(veriler) {
+      tableBody.innerHTML = "";
+      veriler.forEach((veri, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
+          <td>${index + 1}</td>
+          <td>${veri.tarih}</td>
+          <td>${veri.okulNo}</td>
+          <td>${veri.adSoyad}</td>
+          <td><button onclick="deleteRow(${index})">Sil</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+      updateSelectAllStatus();
+    }
 
-  // Tablonun yeniden çizilmesinden sonra kontrol et
-  updateSelectAllStatus();
-}
+    function toggleSelectAllRows() {
+      const checkboxes = document.querySelectorAll('.rowCheckbox');
+      allSelected = !allSelected;
+      checkboxes.forEach(cb => cb.checked = allSelected);
+      document.getElementById("selectToggleBtn").textContent = allSelected ? "Seçimi Kaldır" : "Tümünü Seç";
+    }
 
-function toggleSelectAll(masterCheckbox) {
-  const checkboxes = document.querySelectorAll('.rowCheckbox');
-  checkboxes.forEach(checkbox => {
-    checkbox.checked = masterCheckbox.checked;
-  });
-}
-
-function updateSelectAllStatus() {
-  const allCheckboxes = document.querySelectorAll('.rowCheckbox');
-  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-  if (allCheckboxes.length === 0) {
-    selectAllCheckbox.checked = false;
-    return;
-  }
-  const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
-  selectAllCheckbox.checked = allChecked;
-}
+    function updateSelectAllStatus() {
+      const checkboxes = document.querySelectorAll('.rowCheckbox');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      allSelected = allChecked;
+      document.getElementById("selectToggleBtn").textContent = allChecked ? "Seçimi Kaldır" : "Tümünü Seç";
+    }
 
     function deleteRow(index) {
       data.splice(index, 1);
@@ -238,13 +232,6 @@ function updateSelectAllStatus() {
       data = newData;
       localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
       renderTable(data);
-    }
-
-    function toggleSelectAll(masterCheckbox) {
-      const checkboxes = document.querySelectorAll('.rowCheckbox');
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = masterCheckbox.checked;
-      });
     }
 
     let currentSortColumn = null;
