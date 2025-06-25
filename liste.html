@@ -340,13 +340,26 @@ function clearList() {
       applyFilters();
     }
 
-    function exportToExcel() {
-      let table = document.getElementById("attendanceTable").outerHTML;
-      let link = document.createElement("a");
-      link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(table);
-      link.download = 'yoklama_listesi.xls';
-      link.click();
+function exportToExcel() {
+  // Orijinal tabloyu klonla (orijinale dokunma)
+  const originalTable = document.getElementById("attendanceTable");
+  const tableClone = originalTable.cloneNode(true);
+
+  // Tablodaki her satırdan son hücreyi (İşlem sütunu) kaldır
+  const rows = tableClone.querySelectorAll("tr");
+  rows.forEach(row => {
+    if (row.cells.length > 0) {
+      row.deleteCell(-1); // son sütunu sil
     }
+  });
+
+  // Temiz tabloyu Excel formatında dışa aktar
+  const html = tableClone.outerHTML;
+  const link = document.createElement("a");
+  link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
+  link.download = 'yoklama_listesi.xls';
+  link.click();
+}
 
 function exportToPDF() {
   const baslik = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
