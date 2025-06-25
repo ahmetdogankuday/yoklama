@@ -109,6 +109,10 @@
       background-color: #f9f9f9;
     }
 
+    .selected-row {
+      background-color: rgba(141, 31, 65, 0.1) !important;
+    }
+
     .copyright {
       margin-top: 30px;
       font-size: 12px;
@@ -196,7 +200,7 @@
   <table id="attendanceTable">
     <thead>
       <tr>
-        <th onclick="toggleSelectAllRows()" style="font-weight: bold;">Tümünü Seç</th>
+        <th style="display:none;"></th>
         <th onclick="sortTable(0)">ID</th>
         <th onclick="sortTable(1)">Tarih/Saat</th>
         <th onclick="sortTable(2)">Okul No</th>
@@ -219,74 +223,51 @@
     const tableBody = document.getElementById("tableBody");
     const searchInput = document.getElementById("searchInput");
     let data = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
-    let allSelected = false;
 
     function renderTable(veriler) {
       tableBody.innerHTML = "";
       veriler.forEach((veri, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
+          <td style="display:none;"></td>
           <td>${index + 1}</td>
           <td>${veri.tarih}</td>
           <td>${veri.okulNo}</td>
           <td>${veri.adSoyad}</td>
           <td><button onclick="deleteRow(${index})">Sil</button></td>
         `;
+        row.dataset.selected = "false";
+        row.addEventListener("click", function (e) {
+          if (e.target.tagName.toLowerCase() === "button") return;
+          this.classList.toggle("selected-row");
+          this.dataset.selected = this.dataset.selected === "true" ? "false" : "true";
+        });
         tableBody.appendChild(row);
       });
-      updateSelectAllStatus();
     }
 
     function guncelleDersSecenekleri() {
       const sinif = document.getElementById("sinifSecimi").value;
       const dersSecimi = document.getElementById("dersSecimi");
-
       dersSecimi.innerHTML = '<option value="">Ders Seç</option>';
-
       let dersler = [];
-      if (sinif === "1") {
-        dersler = ["Acil Sağlık Hizmetleri I", "Acil Sağlık Hizmetleri II", "Acil Hasta Bakımı I", "Acil Hasta Bakımı II", "Acil Servis Uygulamaları I", "Acil Servis Uygulamaları II", "Resüsitasyon"];
-      } else if (sinif === "2") {
-        dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV", "Acil Servis Uygulamaları III", "Acil Servis Uygulamaları IV", "Topluma Hizmet Uygulamaları"];
-      }
-
+      if (sinif === "1") dersler = ["Acil Sağlık Hizmetleri I", "Acil Sağlık Hizmetleri II", "Acil Hasta Bakımı I", "Acil Hasta Bakımı II", "Acil Servis Uygulamaları I", "Acil Servis Uygulamaları II", "Resüsitasyon"];
+      else if (sinif === "2") dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV", "Acil Servis Uygulamaları III", "Acil Servis Uygulamaları IV", "Topluma Hizmet Uygulamaları"];
       dersler.forEach(ders => {
         const option = document.createElement("option");
         option.value = ders;
         option.textContent = ders;
         dersSecimi.appendChild(option);
       });
-
       applyFilters();
     }
 
     function applyFilters() {
       const seciliDers = document.getElementById("dersSecimi").value;
       const query = searchInput.value.toLowerCase();
-
-      // Başlığı güncelle
-      const dersBaslikEl = document.getElementById("dersBasligi");
-      dersBaslikEl.textContent = seciliDers ? `${seciliDers} - Yoklama Listesi` : "";
-
-      const filtered = data.filter(item => {
-        const dersUygun = !seciliDers || item.ders === seciliDers;
-        const adNoUygun = item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query);
-        return dersUygun && adNoUygun;
-      });
-
+      document.getElementById("dersBasligi").textContent = seciliDers ? `${seciliDers} - Yoklama Listesi` : "";
+      const filtered = data.filter(item => (!seciliDers || item.ders === seciliDers) && (item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query)));
       renderTable(filtered);
-    }
-
-    function toggleSelectAllRows() {
-      const checkboxes = document.querySelectorAll('.rowCheckbox');
-      allSelected = !allSelected;
-      checkboxes.forEach(cb => cb.checked = allSelected);
-    }
-
-    function updateSelectAllStatus() {
-      const checkboxes = document.querySelectorAll('.rowCheckbox');
-      allSelected = Array.from(checkboxes).every(cb => cb.checked);
     }
 
     function deleteRow(index) {
@@ -298,65 +279,49 @@
     }
 
     function deleteSelectedRows() {
-      const checkboxes = document.querySelectorAll(".rowCheckbox");
-      const newData = data.filter((item, index) => !checkboxes[index].checked);
-      data = newData;
+      const rows = document.querySelectorAll("#tableBody tr");
+      data = data.filter((_, index) => rows[index].dataset.selected !== "true");
       localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
       applyFilters();
     }
 
-    let currentSortColumn = null;
-    let currentSortDirection = 'asc';
-
     function sortTable(columnIndex) {
-      if (currentSortColumn === columnIndex) {
-        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-      } else {
-        currentSortColumn = columnIndex;
-        currentSortDirection = 'asc';
-      }
-
+      let dir = sortTable.dir = sortTable.dir === "asc" ? "desc" : "asc";
       data.sort((a, b) => {
-        let valA, valB;
-        switch (columnIndex) {
-          case 0: valA = data.indexOf(a) + 1; valB = data.indexOf(b) + 1; break;
-          case 1: valA = new Date(a.tarih); valB = new Date(b.tarih); break;
-          case 2: valA = a.okulNo.toString(); valB = b.okulNo.toString(); break;
-          case 3: valA = a.adSoyad.toLowerCase(); valB = b.adSoyad.toLowerCase(); break;
-          default: valA = ""; valB = "";
+        let valA = a[Object.keys(a)[columnIndex]];
+        let valB = b[Object.keys(b)[columnIndex]];
+        if (columnIndex === 1) {
+          valA = new Date(a.tarih);
+          valB = new Date(b.tarih);
         }
-        return (valA < valB ? -1 : 1) * (currentSortDirection === 'asc' ? 1 : -1);
+        return dir === "asc" ? valA > valB ? 1 : -1 : valA < valB ? 1 : -1;
       });
-
       applyFilters();
     }
 
-    searchInput.addEventListener("input", applyFilters);
-
     function exportToExcel() {
       let table = document.getElementById("attendanceTable").outerHTML;
-      let dataType = 'application/vnd.ms-excel';
-      let tableHTML = table.replace(/ /g, '%20');
       let link = document.createElement("a");
-      link.href = 'data:' + dataType + ', ' + tableHTML;
+      link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(table);
       link.download = 'yoklama_listesi.xls';
       link.click();
     }
 
     function exportToPDF() {
-      const dersBasligi = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
+      const baslik = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
       const table = document.getElementById("attendanceTable");
       const win = window.open('', '', 'height=700,width=900');
-      win.document.write('<html><head><title>' + dersBasligi + '</title>');
+      win.document.write('<html><head><title>' + baslik + '</title>');
       win.document.write('<style>body{font-family:Arial;} table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #ccc;padding: 8px;text-align: center;} th {background-color: #eee;}</style>');
       win.document.write('</head><body>');
-      win.document.write('<h2 style="text-align:center; color:#8D1F41;">' + dersBasligi + '</h2>');
+      win.document.write('<h2 style="text-align:center; color:#8D1F41;">' + baslik + '</h2>');
       win.document.write(table.outerHTML);
       win.document.write('</body></html>');
       win.document.close();
       win.print();
     }
 
+    searchInput.addEventListener("input", applyFilters);
     applyFilters();
   </script>
 </body>
