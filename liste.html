@@ -140,6 +140,13 @@
       gap: 12px;
     }
 
+    td span:hover {
+  color: red;
+  font-weight: bold;
+  transform: scale(1.2);
+}
+
+
     @media (max-width: 600px) {
       .top-right-buttons {
         position: static;
@@ -205,7 +212,6 @@
         <th onclick="sortTable(1)">Tarih/Saat</th>
         <th onclick="sortTable(2)">Okul No</th>
         <th onclick="sortTable(3)">Ad Soyad</th>
-        <th>İşlem</th>
       </tr>
     </thead>
     <tbody id="tableBody"></tbody>
@@ -224,27 +230,29 @@
     const searchInput = document.getElementById("searchInput");
     let data = JSON.parse(localStorage.getItem("yoklamaVerileri")) || [];
 
-    function renderTable(veriler) {
-      tableBody.innerHTML = "";
-      veriler.forEach((veri, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="display:none;"></td>
-          <td>${index + 1}</td>
-          <td>${veri.tarih}</td>
-          <td>${veri.okulNo}</td>
-          <td>${veri.adSoyad}</td>
-          <td><button onclick="deleteRow(${index})">Sil</button></td>
-        `;
-        row.dataset.selected = "false";
-        row.addEventListener("click", function (e) {
-          if (e.target.tagName.toLowerCase() === "button") return;
-          this.classList.toggle("selected-row");
-          this.dataset.selected = this.dataset.selected === "true" ? "false" : "true";
-        });
-        tableBody.appendChild(row);
-      });
-    }
+function renderTable(veriler) {
+  tableBody.innerHTML = "";
+  veriler.forEach((veri, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="display:none;"></td>
+      <td>${index + 1}</td>
+      <td>${veri.tarih}</td>
+      <td>${veri.okulNo}</td>
+      <td>${veri.adSoyad}</td>
+      <td style="text-align: right;">
+        <span onclick="deleteRow(${index})" style="cursor:pointer; color:#8D1F41; font-size: 16px;">✖</span>
+      </td>
+    `;
+    row.dataset.selected = "false";
+    row.addEventListener("click", function (e) {
+      if (e.target.tagName.toLowerCase() === "span") return;
+      this.classList.toggle("selected-row");
+      this.dataset.selected = this.dataset.selected === "true" ? "false" : "true";
+    });
+    tableBody.appendChild(row);
+  });
+}
 
     function guncelleDersSecenekleri() {
       const sinif = document.getElementById("sinifSecimi").value;
