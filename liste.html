@@ -348,19 +348,32 @@ function clearList() {
       link.click();
     }
 
-    function exportToPDF() {
-      const baslik = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
-      const table = document.getElementById("attendanceTable");
-      const win = window.open('', '', 'height=700,width=900');
-      win.document.write('<html><head><title>' + baslik + '</title>');
-      win.document.write('<style>body{font-family:Arial;} table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #ccc;padding: 8px;text-align: center;} th {background-color: #eee;}</style>');
-      win.document.write('</head><body>');
-      win.document.write('<h2 style="text-align:center; color:#8D1F41;">' + baslik + '</h2>');
-      win.document.write(table.outerHTML);
-      win.document.write('</body></html>');
-      win.document.close();
-      win.print();
+function exportToPDF() {
+  const baslik = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
+
+  // Tabloyu klonla (orijinal tabloya dokunma)
+  const originalTable = document.getElementById("attendanceTable");
+  const tableClone = originalTable.cloneNode(true);
+
+  // Son sütunu (İşlem) her satırdan kaldır
+  const rows = tableClone.querySelectorAll("tr");
+  rows.forEach(row => {
+    if (row.cells.length > 0) {
+      row.deleteCell(-1); // son hücreyi sil
     }
+  });
+
+  // Yeni pencere oluştur ve yazdır
+  const win = window.open('', '', 'height=700,width=900');
+  win.document.write('<html><head><title>' + baslik + '</title>');
+  win.document.write('<style>body{font-family:Arial;} table {width: 100%; border-collapse: collapse; margin-top: 20px;} th, td {border: 1px solid #ccc; padding: 8px; text-align: center;} th {background-color: #eee;}</style>');
+  win.document.write('</head><body>');
+  win.document.write('<h2 style="text-align:center; color:#8D1F41;">' + baslik + '</h2>');
+  win.document.write(tableClone.outerHTML);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
 
     searchInput.addEventListener("input", applyFilters);
     // applyFilters(); // bunu devre dışı bıraktık
