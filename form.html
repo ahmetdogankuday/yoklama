@@ -324,13 +324,26 @@
         </div>
       `;
     } else if (fark > 60) {
-      document.body.innerHTML = `
-        <div style="text-align:center; padding-top:100px; font-family:Arial;">
-          <h2 style="color:red;">Yoklama bağlantısının süre dolmuştur.</h2>
-          <p>Lütfen güncel QR kodu kullanınız.</p>
-        </div>
-      `;
-    }
+  document.body.innerHTML = `
+    <div style="text-align:center; padding-top:100px; font-family:Arial;">
+      <h2 style="color:red;">Yoklama bağlantısının süresi dolmuştur.</h2>
+      <p>Lütfen güncel QR kodu kullanınız.</p>
+      <br>
+      <a href="https://ahmetdogankuday.github.io/yoklama/index.html" style="
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 24px;
+        background-color: #8D1F41;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+      ">
+        Ana Sayfaya Dön
+      </a>
+    </div>
+  `;
+}
 
     document.getElementById("attendanceForm").addEventListener("submit", function(e) {
       e.preventDefault();
