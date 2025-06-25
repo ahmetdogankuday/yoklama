@@ -81,16 +81,16 @@
       box-sizing: border-box;
     }
 
-table {
-  width: 100%;
-  max-width: 1000px;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
+    table {
+      width: 100%;
+      max-width: 1000px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
 
     th, td {
       border: 1px solid #ccc;
@@ -125,17 +125,16 @@ table {
     }
 
     .filter-container {
-  background-color: rgba(255, 255, 255, 0.85);
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
 
     @media (max-width: 600px) {
       .top-right-buttons {
@@ -152,17 +151,15 @@ table {
         padding: 6px;
       }
 
-       .filter-container {
-    flex-direction: column;
-    align-items: center;
-  }
+      .filter-container {
+        flex-direction: column;
+        align-items: center;
+      }
 
-  input, select {
-    width: 100%;
-  }
+      input, select {
+        width: 100%;
+      }
     }
-
-
   </style>
 </head>
 <body>
@@ -180,31 +177,33 @@ table {
 
   <h1>Yoklama Listesi</h1>
 
-<div class="filter-container">
-  <select id="sinifSecimi" onchange="guncelleDersSecenekleri()">
-    <option value="">Sınıf Seç</option>
-    <option value="1">1. Sınıf</option>
-    <option value="2">2. Sınıf</option>
-  </select>
+  <div class="filter-container">
+    <select id="sinifSecimi" onchange="guncelleDersSecenekleri()">
+      <option value="">Sınıf Seç</option>
+      <option value="1">1. Sınıf</option>
+      <option value="2">2. Sınıf</option>
+    </select>
 
-  <select id="dersSecimi" onchange="applyFilters()">
-    <option value="">Ders Seç</option>
-  </select>
+    <select id="dersSecimi" onchange="applyFilters()">
+      <option value="">Ders Seç</option>
+    </select>
 
-  <input type="text" id="searchInput" placeholder="İsim ya da Okul No ile ara...">
-</div>
+    <input type="text" id="searchInput" placeholder="İsim ya da Okul No ile ara...">
+  </div>
+
+  <h2 id="dersBasligi" style="margin-top: 30px; color: #8D1F41; text-align: center;"></h2>
 
   <table id="attendanceTable">
     <thead>
-  <tr>
-    <th onclick="toggleSelectAllRows()" style="font-weight: bold;">Tümünü Seç</th>
-    <th onclick="sortTable(0)">ID</th>
-    <th onclick="sortTable(1)">Tarih/Saat</th>
-    <th onclick="sortTable(2)">Okul No</th>
-    <th onclick="sortTable(3)">Ad Soyad</th>
-    <th>İşlem</th>
-  </tr>
-</thead>
+      <tr>
+        <th onclick="toggleSelectAllRows()" style="font-weight: bold;">Tümünü Seç</th>
+        <th onclick="sortTable(0)">ID</th>
+        <th onclick="sortTable(1)">Tarih/Saat</th>
+        <th onclick="sortTable(2)">Okul No</th>
+        <th onclick="sortTable(3)">Ad Soyad</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
     <tbody id="tableBody"></tbody>
   </table>
 
@@ -223,92 +222,87 @@ table {
     let allSelected = false;
 
     function renderTable(veriler) {
-  tableBody.innerHTML = "";
-  veriler.forEach((veri, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
-      <td>${index + 1}</td>
-      <td>${veri.tarih}</td>
-      <td>${veri.okulNo}</td>
-      <td>${veri.adSoyad}</td>
-      <td><button onclick="deleteRow(${index})">Sil</button></td>
-    `;
-    tableBody.appendChild(row);
-  });
-  updateSelectAllStatus();
-}
+      tableBody.innerHTML = "";
+      veriler.forEach((veri, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><input type="checkbox" class="rowCheckbox" onchange="updateSelectAllStatus()"></td>
+          <td>${index + 1}</td>
+          <td>${veri.tarih}</td>
+          <td>${veri.okulNo}</td>
+          <td>${veri.adSoyad}</td>
+          <td><button onclick="deleteRow(${index})">Sil</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+      updateSelectAllStatus();
+    }
 
-function guncelleDersSecenekleri() {
-  const sinif = document.getElementById("sinifSecimi").value;
-  const dersSecimi = document.getElementById("dersSecimi");
+    function guncelleDersSecenekleri() {
+      const sinif = document.getElementById("sinifSecimi").value;
+      const dersSecimi = document.getElementById("dersSecimi");
 
-  dersSecimi.innerHTML = '<option value="">Ders Seç</option>';
+      dersSecimi.innerHTML = '<option value="">Ders Seç</option>';
 
-  let dersler = [];
-  if (sinif === "1") {
-    dersler = ["Acil Sağlık Hizmetleri I", "Acil Sağlık Hizmetleri II", "Acil Hasta Bakımı I", "Acil Hasta Bakımı II", "Acil Servis Uygulamaları I", "Acil Servis Uygulamaları II", "Resüsitasyon"];
-  } else if (sinif === "2") {
-    dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV", "Acil Servis Uygulamaları III", "Acil Servis Uygulamaları IV", "Topluma Hizmet Uygulamaları"];
-  }
+      let dersler = [];
+      if (sinif === "1") {
+        dersler = ["Acil Sağlık Hizmetleri I", "Acil Sağlık Hizmetleri II", "Acil Hasta Bakımı I", "Acil Hasta Bakımı II", "Acil Servis Uygulamaları I", "Acil Servis Uygulamaları II", "Resüsitasyon"];
+      } else if (sinif === "2") {
+        dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV", "Acil Servis Uygulamaları III", "Acil Servis Uygulamaları IV", "Topluma Hizmet Uygulamaları"];
+      }
 
-  dersler.forEach(ders => {
-    const option = document.createElement("option");
-    option.value = ders;
-    option.textContent = ders;
-    dersSecimi.appendChild(option);
-  });
+      dersler.forEach(ders => {
+        const option = document.createElement("option");
+        option.value = ders;
+        option.textContent = ders;
+        dersSecimi.appendChild(option);
+      });
 
-  applyFilters();
-}
+      applyFilters();
+    }
 
-function applyFilters() {
-  const seciliDers = document.getElementById("dersSecimi").value;
-  const query = searchInput.value.toLowerCase();
+    function applyFilters() {
+      const seciliDers = document.getElementById("dersSecimi").value;
+      const query = searchInput.value.toLowerCase();
 
-  const filtered = data.filter(item => {
-    const dersUygun = !seciliDers || item.ders === seciliDers;
-    const adNoUygun = item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query);
-    return dersUygun && adNoUygun;
-  });
+      // Başlığı güncelle
+      const dersBaslikEl = document.getElementById("dersBasligi");
+      dersBaslikEl.textContent = seciliDers ? `${seciliDers} - Yoklama Listesi` : "";
 
-  renderTable(filtered);
-}
+      const filtered = data.filter(item => {
+        const dersUygun = !seciliDers || item.ders === seciliDers;
+        const adNoUygun = item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query);
+        return dersUygun && adNoUygun;
+      });
+
+      renderTable(filtered);
+    }
 
     function toggleSelectAllRows() {
       const checkboxes = document.querySelectorAll('.rowCheckbox');
       allSelected = !allSelected;
       checkboxes.forEach(cb => cb.checked = allSelected);
-      document.getElementById("selectToggleBtn").textContent = allSelected ? "Seçimi Kaldır" : "Tümünü Seç";
     }
 
     function updateSelectAllStatus() {
       const checkboxes = document.querySelectorAll('.rowCheckbox');
-      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-      allSelected = allChecked;
-      document.getElementById("selectToggleBtn").textContent = allChecked ? "Seçimi Kaldır" : "Tümünü Seç";
+      allSelected = Array.from(checkboxes).every(cb => cb.checked);
     }
 
-function deleteRow(index) {
-  const confirmed = confirm("Bu kaydı silmek istediğinizden emin misiniz?");
-  if (!confirmed) return;
-
-  data.splice(index, 1);
-  localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
-  renderTable(data);
-}
+    function deleteRow(index) {
+      if (confirm("Bu kaydı silmek istediğinizden emin misiniz?")) {
+        data.splice(index, 1);
+        localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
+        applyFilters();
+      }
+    }
 
     function deleteSelectedRows() {
       const checkboxes = document.querySelectorAll(".rowCheckbox");
-      const newData = [];
-      data.forEach((item, index) => {
-        if (!checkboxes[index].checked) {
-          newData.push(item);
-        }
-      });
+      const newData = data.filter((item, index) => !checkboxes[index].checked);
       data = newData;
       localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
-      renderTable(data);
+      applyFilters();
     }
 
     let currentSortColumn = null;
@@ -325,32 +319,16 @@ function deleteRow(index) {
       data.sort((a, b) => {
         let valA, valB;
         switch (columnIndex) {
-          case 0:
-            valA = data.indexOf(a) + 1;
-            valB = data.indexOf(b) + 1;
-            break;
-          case 1:
-            valA = new Date(a.tarih);
-            valB = new Date(b.tarih);
-            break;
-          case 2:
-            valA = a.okulNo.toString();
-            valB = b.okulNo.toString();
-            break;
-          case 3:
-            valA = a.adSoyad.toLowerCase();
-            valB = b.adSoyad.toLowerCase();
-            break;
-          default:
-            valA = ""; valB = "";
+          case 0: valA = data.indexOf(a) + 1; valB = data.indexOf(b) + 1; break;
+          case 1: valA = new Date(a.tarih); valB = new Date(b.tarih); break;
+          case 2: valA = a.okulNo.toString(); valB = b.okulNo.toString(); break;
+          case 3: valA = a.adSoyad.toLowerCase(); valB = b.adSoyad.toLowerCase(); break;
+          default: valA = ""; valB = "";
         }
-
-        if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-        if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-        return 0;
+        return (valA < valB ? -1 : 1) * (currentSortDirection === 'asc' ? 1 : -1);
       });
 
-      renderTable(data);
+      applyFilters();
     }
 
     searchInput.addEventListener("input", applyFilters);
@@ -366,19 +344,20 @@ function deleteRow(index) {
     }
 
     function exportToPDF() {
+      const dersBasligi = document.getElementById("dersBasligi").textContent || "Yoklama Listesi";
       const table = document.getElementById("attendanceTable");
       const win = window.open('', '', 'height=700,width=900');
-      win.document.write('<html><head><title>Yoklama PDF</title>');
-      win.document.write('<style>table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #ccc;padding: 8px;text-align: center;} th {background-color: #eee;}</style>');
+      win.document.write('<html><head><title>' + dersBasligi + '</title>');
+      win.document.write('<style>body{font-family:Arial;} table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #ccc;padding: 8px;text-align: center;} th {background-color: #eee;}</style>');
       win.document.write('</head><body>');
-      win.document.write('<h2>Yoklama Listesi</h2>');
+      win.document.write('<h2 style="text-align:center; color:#8D1F41;">' + dersBasligi + '</h2>');
       win.document.write(table.outerHTML);
       win.document.write('</body></html>');
       win.document.close();
       win.print();
     }
 
-  applyFilters();
+    applyFilters();
   </script>
 </body>
 </html>
