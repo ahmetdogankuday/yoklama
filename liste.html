@@ -148,6 +148,19 @@
 
   <h1>Yoklama Listesi</h1>
 
+<div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px;">
+  <select id="sinifSecimi" onchange="guncelleDersSecenekleri()" style="padding: 8px; font-size: 14px;">
+    <option value="">Sınıf Seç</option>
+    <option value="1">1. Sınıf</option>
+    <option value="2">2. Sınıf</option>
+  </select>
+
+  <select id="dersSecimi" onchange="applyFilters()" style="padding: 8px; font-size: 14px;">
+    <option value="">Ders Seç</option>
+  </select>
+</div>
+
+
   <div class="search-bar">
     <input type="text" id="searchInput" placeholder="İsim ya da Okul No ile ara...">
   </div>
@@ -197,6 +210,41 @@
   updateSelectAllStatus();
 }
 
+function guncelleDersSecenekleri() {
+  const sinif = document.getElementById("sinifSecimi").value;
+  const dersSecimi = document.getElementById("dersSecimi");
+
+  dersSecimi.innerHTML = '<option value="">Ders Seç</option>';
+
+  let dersler = [];
+  if (sinif === "1") {
+    dersler = ["Acil Sağlık Hizmetleri I", "Acil Sağlık Hizmetleri II", "Acil Hasta Bakımı I", "Acil Hasta Bakımı II", "Acil Servis Uygulamaları I", "Acil Servis Uygulamaları II", "Resüsitasyon"];
+  } else if (sinif === "2") {
+    dersler = ["Acil Hasta Bakımı III", "Acil Hasta Bakımı IV", "Acil Servis Uygulamaları III", "Acil Servis Uygulamaları IV", "Topluma Hizmet Uygulamaları"];
+  }
+
+  dersler.forEach(ders => {
+    const option = document.createElement("option");
+    option.value = ders;
+    option.textContent = ders;
+    dersSecimi.appendChild(option);
+  });
+
+  applyFilters();
+}
+
+function applyFilters() {
+  const seciliDers = document.getElementById("dersSecimi").value;
+  const query = searchInput.value.toLowerCase();
+
+  const filtered = data.filter(item => {
+    const dersUygun = !seciliDers || item.ders === seciliDers;
+    const adNoUygun = item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query);
+    return dersUygun && adNoUygun;
+  });
+
+  renderTable(filtered);
+}
 
     function toggleSelectAllRows() {
       const checkboxes = document.querySelectorAll('.rowCheckbox');
@@ -276,14 +324,7 @@ function deleteRow(index) {
       renderTable(data);
     }
 
-    searchInput.addEventListener("input", function () {
-      const query = this.value.toLowerCase();
-      const filtered = data.filter(item =>
-        item.adSoyad.toLowerCase().includes(query) ||
-        item.okulNo.toLowerCase().includes(query)
-      );
-      renderTable(filtered);
-    });
+    searchInput.addEventListener("input", applyFilters);
 
     function exportToExcel() {
       let table = document.getElementById("attendanceTable").outerHTML;
@@ -308,7 +349,7 @@ function deleteRow(index) {
       win.print();
     }
 
-    renderTable(data);
+  applyFilters();
   </script>
 </body>
 </html>
