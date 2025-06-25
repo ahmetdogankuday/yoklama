@@ -279,11 +279,39 @@
     }
 
     function deleteSelectedRows() {
-      const rows = document.querySelectorAll("#tableBody tr");
-      data = data.filter((_, index) => rows[index].dataset.selected !== "true");
-      localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
-      applyFilters();
+  const rows = document.querySelectorAll("#tableBody tr");
+  const selectedIndexes = [];
+  
+  rows.forEach((row, index) => {
+    if (row.dataset.selected === "true") {
+      selectedIndexes.push(index);
     }
+  });
+
+  if (selectedIndexes.length === 0) {
+    alert("Lütfen silmek için en az bir kayıt seçiniz.");
+    return;
+  }
+
+  if (!confirm(`${selectedIndexes.length} kayıt silinecek. Onaylıyor musunuz?`)) {
+    return;
+  }
+
+  data = data.filter((_, index) => !selectedIndexes.includes(index));
+  localStorage.setItem("yoklamaVerileri", JSON.stringify(data));
+  applyFilters();
+}
+
+function clearList() {
+  if (!confirm("Tüm kayıtlar silinecek. Devam etmek istiyor musunuz?")) {
+    return;
+  }
+
+  data = [];
+  localStorage.removeItem("yoklamaVerileri");
+  applyFilters();
+}
+
 
     function sortTable(columnIndex) {
       let dir = sortTable.dir = sortTable.dir === "asc" ? "desc" : "asc";
@@ -322,7 +350,8 @@
     }
 
     searchInput.addEventListener("input", applyFilters);
-    applyFilters();
+    // applyFilters(); // bunu devre dışı bıraktık
+    renderTable([]); // boş tablo göster
   </script>
 </body>
 </html>
