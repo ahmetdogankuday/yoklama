@@ -262,13 +262,24 @@
       applyFilters();
     }
 
-    function applyFilters() {
-      const seciliDers = document.getElementById("dersSecimi").value;
-      const query = searchInput.value.toLowerCase();
-      document.getElementById("dersBasligi").textContent = seciliDers ? `${seciliDers} - Yoklama Listesi` : "";
-      const filtered = data.filter(item => (!seciliDers || item.ders === seciliDers) && (item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query)));
-      renderTable(filtered);
-    }
+function applyFilters() {
+  const seciliDers = document.getElementById("dersSecimi").value;
+  const query = searchInput.value.toLowerCase();
+
+  // Eğer ders seçilmemişse hiçbir şey gösterme
+  if (!seciliDers) {
+    document.getElementById("dersBasligi").textContent = "";
+    renderTable([]);
+    return;
+  }
+
+  document.getElementById("dersBasligi").textContent = `${seciliDers} - Yoklama Listesi`;
+  const filtered = data.filter(item =>
+    item.ders === seciliDers &&
+    (item.adSoyad.toLowerCase().includes(query) || item.okulNo.toLowerCase().includes(query))
+  );
+  renderTable(filtered);
+}
 
     function deleteRow(index) {
       if (confirm("Bu kaydı silmek istediğinizden emin misiniz?")) {
