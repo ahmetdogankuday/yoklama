@@ -167,6 +167,9 @@
   </style>
 </head>
 <body>
+
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
   <script src="login.js"></script>
   <script>
     enforceAuthentication("form.html");
@@ -341,24 +344,54 @@ function clearList() {
     }
 
 function exportToExcel() {
-  // Orijinal tabloyu klonla (orijinale dokunma)
-  const originalTable = document.getElementById("attendanceTable");
-  const tableClone = originalTable.cloneNode(true);
+  const dersAdi = document.getElementById("dersSecimi").value || "Yoklama";
+  const tarihSaat = new Date().toLocaleString("tr-TR").replaceAll(":", "-").replaceAll(".", "-");
 
-  // Tablodaki her satırdan son hücreyi (İşlem sütunu) kaldır
-  const rows = tableClone.querySelectorAll("tr");
+  const table = document.getElementById("attendanceTable").cloneNode(true);
+
+  // "İşlem" sütununu çıkar
+  const rows = table.querySelectorAll("tr");
   rows.forEach(row => {
     if (row.cells.length > 0) {
-      row.deleteCell(-1); // son sütunu sil
+      row.deleteCell(-1);
     }
   });
 
-  // Temiz tabloyu Excel formatında dışa aktar
-  const html = tableClone.outerHTML;
-  const link = document.createElement("a");
-  link.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(html);
-  link.download = 'yoklama_listesi.xls';
-  link.click();
+  // Verileri diziye aktar
+  const worksheetData = [];
+  const trList = table.querySelectorAll("tr");
+  trList.forEach(tr => {
+    const row = [];
+    tr.querySelectorAll("th, td").forEach(cell => row.push(cell.innerText));
+    worksheetData.push(row);
+  });
+
+  // Çalışma sayfası oluştur
+  const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+
+  // Hücreleri ortala + kenarlık ver
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cell_address = XLSX.utils.encode_cell({r: R, c: C});
+      if (!ws[cell_address]) continue;
+      if (!ws[cell_address].s) ws[cell_address].s = {};
+      ws[cell_address].s = {
+        alignment: {horizontal: "center", vertical: "center"},
+        border: {
+          top: {style: "thin"}, bottom: {style: "thin"},
+          left: {style: "thin"}, right: {style: "thin"}
+        }
+      };
+    }
+  }
+
+  // Excel dosyası oluştur
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Yoklama");
+
+  const dosyaAdi = `${dersAdi} - Yoklama Listesi - ${tarihSaat}.xlsx`;
+  XLSX.writeFile(wb, dosyaAdi);
 }
 
 function exportToPDF() {
